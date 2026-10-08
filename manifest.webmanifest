@@ -1,0 +1,14 @@
+{
+  "name":"摸鱼大王",
+  "short_name":"摸鱼大王",
+  "description":"挂机推关、英雄养成、装备掉落、研究与转生的手机放置小游戏。",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#f3f5f8",
+  "theme_color":"#315fd6",
+  "orientation":"portrait-primary",
+  "icons":[
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
