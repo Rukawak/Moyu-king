@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#315fd6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="摸鱼大王">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <title>摸鱼大王</title>
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="title">摸鱼大王 <span class="version">v1.0</span></div>
+        <div class="subtitle">挂机推关 · 英雄养成 · 装备词条 · Boss · 研究 · 转生</div>
+      </div>
+      <div class="resources">
+        <span>🪙 <b id="gold">0</b></span>
+        <span>💠 <b id="essence">0</b></span>
+        <span>💎 <b id="gems">0</b></span>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div><small>关卡</small><b id="stage">1</b></div>
+      <div><small>战力</small><b id="power">0</b></div>
+      <div><small>最高关</small><b id="best">1</b></div>
+      <div><small>VIP</small><b id="vip">0</b></div>
+    </section>
+
+    <main>
+      <section class="page active" id="page-battle">
+        <article class="panel battle">
+          <div class="panel-head">
+            <div>
+              <h2 id="enemyName">实习主管</h2>
+              <p id="enemyMeta">普通关 · 战力 0</p>
+            </div>
+            <div class="actions">
+              <button id="speedBtn" type="button">×1</button>
+              <button id="autoBtn" type="button">自动技能：开</button>
+            </div>
+          </div>
+
+          <div class="hp-group">
+            <div class="hp-label"><span>摸鱼小队</span><span id="teamHpText">100%</span></div>
+            <div class="hp"><i id="teamHpBar" class="team" style="width:100%"></i></div>
+          </div>
+          <div class="hp-group">
+            <div class="hp-label"><span>老板军团</span><span id="enemyHpText">100%</span></div>
+            <div class="hp"><i id="enemyHpBar" class="enemy" style="width:100%"></i></div>
+          </div>
+
+          <div id="skills" class="skills"></div>
+
+          <div class="vault">
+            <div>
+              <strong>挂机金库</strong>
+              <p>战斗中持续积累，VIP与研究会提高效率。</p>
+            </div>
+            <button id="claimIdle" type="button" class="primary">领取 <span id="idleGold">0</span></button>
+          </div>
+
+          <div id="battleLog" class="log">自动战斗已开始。</div>
+        </article>
+
+        <article id="choicePanel" class="panel hidden">
+          <h2>策略三选一</h2>
+          <p>每过 3 关触发一次，持续到本次转生结束。</p>
+          <div id="choiceList" class="stack"></div>
+        </article>
+
+        <article id="eventPanel" class="panel hidden">
+          <h2>办公室事件</h2>
+          <p id="eventText"></p>
+          <div id="eventList" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-heroes">
+        <article class="panel">
+          <h2>英雄队伍</h2>
+          <p>金币升级，传奇英雄通过确定性礼包解锁。</p>
+          <div id="heroList" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-gear">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>已装备</h2>
+              <p id="gearSummary"></p>
+            </div>
+            <button id="forgeBtn" type="button">全体强化</button>
+          </div>
+          <div id="equippedList" class="stack"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>背包</h2>
+              <p>战斗掉落装备；低品质可分解为精华。</p>
+            </div>
+            <button id="salvageBtn" type="button">分解普通/稀有</button>
+          </div>
+          <div id="inventoryList" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-research">
+        <article class="panel">
+          <h2>办公室研究</h2>
+          <p>使用精华购买永久升级，转生后保留。</p>
+          <div id="researchList" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-goals">
+        <article class="panel">
+          <h2>长期目标</h2>
+          <div id="goalList" class="stack"></div>
+        </article>
+        <article class="panel">
+          <h2>摸鱼转生</h2>
+          <p>第 20 关后可转生。重置本轮关卡、金币、英雄等级与临时策略；装备、研究、钻石与精华保留。</p>
+          <div class="callout">本次可获得 <b id="prestigeGain">0</b> 点摸鱼值。每点永久 +8% 伤害与金币收益。</div>
+          <button id="prestigeBtn" type="button" class="primary full">20关解锁</button>
+        </article>
+      </section>
+
+      <section class="page" id="page-shop">
+        <article class="panel">
+          <h2>模拟充值</h2>
+          <div class="notice">这是单机原型，只模拟充值数值，不发生真实支付。所有商品都是确定性奖励。</div>
+          <div id="payList" class="shop-grid"></div>
+        </article>
+        <article class="panel">
+          <h2>确定性商品</h2>
+          <div id="fixedShop" class="stack"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-save">
+        <article class="panel">
+          <h2>存档</h2>
+          <div class="notice">自动保存到当前浏览器。换手机、清缓存或换浏览器前，请导出 JSON 存档。</div>
+          <div class="save-actions">
+            <button id="saveNow" type="button" class="primary">立即保存</button>
+            <button id="exportSave" type="button">导出存档</button>
+            <button id="importSave" type="button">导入存档</button>
+            <input id="fileInput" type="file" accept="application/json,.json" hidden>
+            <button id="installBtn" type="button">添加到主屏幕</button>
+            <button id="resetBtn" type="button" class="danger">重开新档</button>
+          </div>
+          <p id="saveInfo"></p>
+          <p id="installInfo">手机浏览器打开后，可添加到主屏幕。</p>
+        </article>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav active" data-page="battle" type="button"><span>⚔️</span>战斗</button>
+      <button class="nav" data-page="heroes" type="button"><span>👥</span>英雄</button>
+      <button class="nav" data-page="gear" type="button"><span>🎒</span>装备</button>
+      <button class="nav" data-page="research" type="button"><span>🧪</span>研究</button>
+      <button class="nav" data-page="goals" type="button"><span>🎯</span>目标</button>
+      <button class="nav" data-page="shop" type="button"><span>💎</span>商城</button>
+      <button class="nav" data-page="save" type="button"><span>💾</span>存档</button>
+    </nav>
+  </div>
+
+  <div id="offlineModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>欢迎回来</h2>
+      <p id="offlineText"></p>
+      <button id="offlineClaim" type="button" class="primary full">领取离线收益</button>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
