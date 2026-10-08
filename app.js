@@ -68,6 +68,8 @@ function load(){
     pendingOffline=Math.floor(mins*base*eff);
   }
   state.lastSeen=Date.now();
+  // 三选一/随机事件属于瞬时 UI，不跨刷新保存；重新打开游戏时自动继续挂机。
+  state.battlePaused=false;
   state.enemyHp=Math.min(state.enemyHp||enemyMaxHp(),enemyMaxHp());
 }
 function migrate(s){
@@ -85,7 +87,8 @@ function migrate(s){
 }
 function save(msg){
   state.lastSeen=Date.now();
-  localStorage.setItem(SAVE_KEY,JSON.stringify(state));
+  const snapshot={...state,battlePaused:false};
+  localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot));
   if(msg) $('#saveInfo').textContent=msg;
 }
 function vip(){
@@ -507,7 +510,14 @@ $('#installBtn').addEventListener('click',async()=>{
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('#installInfo').textContent='现在可以直接点“添加到主屏幕”。'});
 window.addEventListener('appinstalled',()=>{$('#installInfo').textContent='已经安装到主屏幕。';deferredInstall=null});
 window.addEventListener('pagehide',()=>save());
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){
+    save();
+  }else{
+    state.battlePaused=false;
+    battleTick();
+  }
+});
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 load();
@@ -517,6 +527,20 @@ if(pendingOffline>0){
   $('#offlineText').textContent='离线期间累计 '+pendingOffline+' 金币（最多计算 8 小时）。';
   $('#offlineModal').classList.remove('hidden');
 }
-setInterval(battleTick,850);
+let battleTimer=null;
+function startBattleLoop(){
+  if(battleTimer) clearInterval(battleTimer);
+  state.battlePaused=false;
+  battleTick(); // 打开页面后立即发生一次战斗结算，不再等第一个 850ms
+  battleTimer=setInterval(()=>{
+    try{
+      battleTick();
+    }catch(err){
+      console.error('battle loop error',err);
+      state.battlePaused=false;
+    }
+  },850);
+}
+startBattleLoop();
 setInterval(()=>save(),5000);
 })();
